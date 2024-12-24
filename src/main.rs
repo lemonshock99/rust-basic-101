@@ -156,8 +156,32 @@ fn main() {
     player2.skill_lvup();
     player2.got_healing(20);   
 
+    let fighting = Crabbystate::Fighting;
+    let collecting = Crabbystate::Collecting(20);
+    let defending = Crabbystate::Defending;
+
+    fighting.state_represent();
+    collecting.state_represent();
+    defending.state_represent();
+
+
 }
 
+enum Crabbystate {
+    Fighting,
+    Collecting(u32),
+    Defending,
+}
+
+impl Crabbystate {
+    fn state_represent(&self){
+        match self {
+            Crabbystate::Fighting => println!("Fighting Mode"),
+            Crabbystate::Collecting(amount) => println!("collecting item {} ea", amount),
+            Crabbystate::Defending => println!("Dedend mode"),
+        }
+    }
+}
 
 struct Crabby {
     name: String,
