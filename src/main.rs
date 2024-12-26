@@ -139,6 +139,7 @@ fn main() {
     let chosen_map = longest_map(map1, map2);
     println!("Crabby's longest map: {}", chosen_map);
 
+    // struct -------------
 
     let mut player1= Crabby {
         name: "Plug".to_string(),
@@ -155,6 +156,10 @@ fn main() {
     player2.take_damage(46);
     player2.skill_lvup();
     player2.got_healing(20);   
+    
+    // struct -------------
+
+    // enum -------------
 
     let fighting = Crabbystate::Fighting;
     let collecting = Crabbystate::Collecting(20);
@@ -164,9 +169,55 @@ fn main() {
     collecting.state_represent();
     defending.state_represent();
 
+    // enum -------------
+
+    // Trait -------------
+
+    let gold = Inventory {item: 100};
+    let sword = Inventory {item: "Excalibur"};
+
+    gold.display();
+    sword.display();
+
+    // Trait -------------
+
+    // String vs borrow String (&str)
+
+    let map = String::from("Old Map");
+
+    // let borrow_map = &map[0..5];
+    // println!("{}",borrow_map)
+    let borrow_map = map.as_str();
+
+    let mut crabby_map = borrow_map.to_string();
+
+    println!("{}",crabby_map);
+    crabby_map.push_str(" to new map");
+    println!("{}",crabby_map);
+    // String vs borrow String (&str)
 
 }
 
+//======================= trait
+
+struct Inventory <T>{
+    item: T,
+}
+
+trait DisplayItem {
+    fn display(&self);
+}
+
+impl<T> DisplayItem for Inventory<T> where T: std::fmt::Debug{
+    fn display(&self) {
+        println!("{:?}", self.item);
+    }
+
+} 
+
+//======================= trait
+
+//======================= enum
 enum Crabbystate {
     Fighting,
     Collecting(u32),
@@ -183,6 +234,9 @@ impl Crabbystate {
     }
 }
 
+//======================= enum
+
+//======================= struct + method
 struct Crabby {
     name: String,
     skill_level: u32,
@@ -212,6 +266,8 @@ impl Crabby {
         );
     }
 }
+
+//======================= struct + method
 
 fn merge_string (string1: String, string2: String) -> String {
     return format!("{} {}", string1, string2)
