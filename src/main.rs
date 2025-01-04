@@ -1,4 +1,5 @@
 use std::io::{self, Write};
+use std::collections::HashMap;
 
 fn main() {
     let mut age = 10;
@@ -19,7 +20,8 @@ fn main() {
 
     let mut input = String::new();
 
-    print!("How about weather today? : ");
+    println!("How about weather today?");
+    print!("(sunny, rainy, stromy) : ");
     io::stdout().flush().unwrap();
 
     io::stdin()
@@ -195,6 +197,97 @@ fn main() {
     crabby_map.push_str(" to new map");
     println!("{}",crabby_map);
     // String vs borrow String (&str)
+
+    // for loop
+    for i in 0..5 {
+        println!("for loop : {}",i)
+    }
+
+    let treasures: [&str;4] = ["Gold","Silver","Ruby Gem","Emerald"];
+    let mut energy = 2;
+
+    for treasure in treasures.iter(){
+        // println!("{}",treasure);
+
+        if energy == 0 {
+            println!("Not enough energy");
+            break;
+        } else if treasure == &"Ruby Gem"{
+            println!("Lucky you got {}", treasure);
+            break;
+        }
+
+        energy -= 1;
+
+    }
+
+    
+    // Vector
+    // create an empty Vector
+    let mut treasures: Vec<String> = Vec::new();
+
+    // add some treasures to vector
+    treasures.push(String::from("Gold coins"));
+    treasures.push(String::from("Emerald"));
+    treasures.push(String::from("Sword"));
+
+    println!("Crabby's Treasures {:?} lenght of Treasure is {}",treasures, treasures.len());
+    println!("Capacity of Treasure is {}",treasures.capacity());
+
+    let one_treasure = &treasures[0];
+    println!("borrow First : {}",one_treasure);
+
+    let last_treasure = treasures.pop();
+    let second_treasure = treasures.remove(1);
+
+    println!("pop remove Last : {:?}",last_treasure);
+    println!("Remove index Second : {}",second_treasure);
+
+    println!("Crabby's Treasures {:?} lenght of Treasure is {}",treasures, treasures.len());
+    println!("Capacity of Treasure is {}",treasures.capacity());
+
+    treasures.shrink_to(2);
+    println!("Adjust capacity to 2, Capacity of Treasure is {}",treasures.capacity()); 
+
+    // Vector 
+
+    // iterators and Closures
+
+    let treasures = vec![100,200,300,400];
+
+    let double_treasure: Vec<i32> = treasures.iter().map(|x| x * 2).collect();
+
+    println!("{:?}",double_treasure);
+
+    // iterators and Closures
+
+    // HashMap ----- (Key, Value)
+
+    let mut treasures = HashMap::new();
+
+    treasures.insert("Gold Coin", 10);
+    treasures.insert("Gem", 1000);
+
+    if let Some(gem) = treasures.get("Gem") {
+        println!("Gem: {}", gem);
+    }
+    
+    if let Some(gold) = treasures.get_mut("Gold Coin")  {
+        *gold += 100;
+        println!("Gold Coin + 100, Now is {}", gold)
+    }
+
+    for (k, v) in treasures.iter() {
+        println!("key is {}, Value is {}", k, v);
+    }
+
+        // tuple in vector to Hashmap
+    let items = vec![("Gold", 50), ("Silver", 100)];
+    let treasure_map: HashMap<&str, i32> = items.into_iter().collect();
+    println!("{:?}", treasure_map);  // Output: {"Gold": 50, "Silver": 100}
+        // tuple in vector to Hashmap
+
+    // HashMap ----- (Key, Value)
 
 }
 
