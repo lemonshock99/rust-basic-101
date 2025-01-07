@@ -289,10 +289,52 @@ fn main() {
 
     // HashMap ----- (Key, Value)
 
+    // Error Handling 
+
+    // Option Type --- Option ค่าจะมีหรือไม่มีก็ได้ Some คือ มี Value, None คือ ไม่เจอ Value
+    let treasures = vec!["Gold", "Ruby", "Emerald"];
+    let treasure = match treasures.get(3) {
+        Some(t) => t,
+        None => "No Treasure Found",
+    };
+
+    println!("{}", treasure);
+
+    // Generic Type Result 
+    // Result <__type เมื่อ Ok__, __type เมื่อ Error__>
+    fn open_chest(is_locked:bool) -> Result<String, String> {
+        if is_locked {
+            Err("Treasure is locked".to_string())
+        } else {
+            Ok("Crabby open Treasure and found Gold !".to_string())
+        }
+    }
+    let chest_result = open_chest(true);
+    match chest_result {
+        Ok(message) => println!("{}",message),
+        Err(error) => println!("error : {}",error),
+    }
+
+    // Unwrap_or คือการบอกว่าถ้า error ค่า default จะเป็นอะไร
+    let gem = treasures.get(3).unwrap_or(&"Gold");
+    println!("gem parameter : {}", gem);
+
+    // Unwrap_or_else 
+
+    // การใช้ ? กรณีที่ Result Error เหมือนกันกับ Function ที่ใหญ่กว่า
+    // () คือ void แสดงถึงไม่มีข้อมูล ไม่มีค่า
+    fn result_error() -> Result<(), String> {
+        let chest_result = open_chest(false)?; // ใช่ ? ต่อท้าย จะเป็นรูปแบบย่อในการดัก error 
+        Ok(()) // คืนค่า Ok ไม่มีข้อมูลเพิ่มเติม
+    }
+
+    // การใช้ ? กรณีที่ Result Error เหมือนกันกับ Function ที่ใหญ่กว่า
+
+    // Error Handling 
 }
 
 //======================= trait
-
+// T เป็น Generic Type Parameter สามารถเป็น type อะไรก็ได้เช่น i32, &str, string
 struct Inventory <T>{
     item: T,
 }
