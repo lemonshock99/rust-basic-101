@@ -291,7 +291,27 @@ fn main() {
 
     // Error Handling 
 
+    // ---------------------- Generic Type Option ----
     // Option Type --- Option ค่าจะมีหรือไม่มีก็ได้ Some คือ มี Value, None คือ ไม่เจอ Value
+
+    // ------------------------------- เขียนแบบ function
+    fn open_box(is_empty:bool) -> Option<String> {
+        if is_empty {
+            None
+        } else {
+            Some("You found Apple".to_string())
+        }
+    }
+
+    let item_in_box = match open_box(false) {
+        Some(t) => t,
+        None => "No item Found".to_string(),
+    };
+
+    println!("{}",item_in_box);
+
+    // -------------------------------
+
     let treasures = vec!["Gold", "Ruby", "Emerald"];
     let treasure = match treasures.get(3) {
         Some(t) => t,
@@ -300,7 +320,7 @@ fn main() {
 
     println!("{}", treasure);
 
-    // Generic Type Result 
+    // ---------------------- Generic Type Result ----
     // Result <__type เมื่อ Ok__, __type เมื่อ Error__>
     fn open_chest(is_locked:bool) -> Result<String, String> {
         if is_locked {
@@ -325,7 +345,13 @@ fn main() {
     // () คือ void แสดงถึงไม่มีข้อมูล ไม่มีค่า
     fn result_error() -> Result<(), String> {
         let chest_result = open_chest(false)?; // ใช่ ? ต่อท้าย จะเป็นรูปแบบย่อในการดัก error 
+        println!("message in 'chest_result' function: {}",chest_result);
         Ok(()) // คืนค่า Ok ไม่มีข้อมูลเพิ่มเติม
+    }
+
+    match result_error() {
+        Ok(()) => {}, // ไม่ทำอะไรเลยในกรณี Ok
+        Err(error) => println!("error: {}",error),
     }
 
     // การใช้ ? กรณีที่ Result Error เหมือนกันกับ Function ที่ใหญ่กว่า
