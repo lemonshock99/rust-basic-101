@@ -1,5 +1,6 @@
 use std::io::{self, Write};
 use std::collections::HashMap;
+use std::{cell::RefCell, rc::Rc};
 
 fn main() {
     let mut age = 10;
@@ -141,7 +142,7 @@ fn main() {
     let chosen_map = longest_map(map1, map2);
     println!("Crabby's longest map: {}", chosen_map);
 
-    // struct -------------
+    // struct ------------------ start
 
     let mut player1= Crabby {
         name: "Plug".to_string(),
@@ -159,9 +160,9 @@ fn main() {
     player2.skill_lvup();
     player2.got_healing(20);   
     
-    // struct -------------
+    // struct ------------------ end
 
-    // enum -------------
+    // enum ------------------ start
 
     let fighting = Crabbystate::Fighting;
     let collecting = Crabbystate::Collecting(20);
@@ -171,9 +172,9 @@ fn main() {
     collecting.state_represent();
     defending.state_represent();
 
-    // enum -------------
+    // enum ------------------ end
 
-    // Trait -------------
+    // Trait ------------------ start
 
     let gold = Inventory {item: 100};
     let sword = Inventory {item: "Excalibur"};
@@ -181,9 +182,9 @@ fn main() {
     gold.display();
     sword.display();
 
-    // Trait -------------
+    // Trait ------------------ end
 
-    // String vs borrow String (&str)
+    // String vs borrow String (&str) ------------------ start
 
     let map = String::from("Old Map");
 
@@ -196,7 +197,7 @@ fn main() {
     println!("{}",crabby_map);
     crabby_map.push_str(" to new map");
     println!("{}",crabby_map);
-    // String vs borrow String (&str)
+    // String vs borrow String (&str) ------------------ end
 
     // for loop
     for i in 0..5 {
@@ -222,7 +223,7 @@ fn main() {
     }
 
     
-    // Vector
+    // Vector ------------------ start
     // create an empty Vector
     let mut treasures: Vec<String> = Vec::new();
 
@@ -249,9 +250,9 @@ fn main() {
     treasures.shrink_to(2);
     println!("Adjust capacity to 2, Capacity of Treasure is {}",treasures.capacity()); 
 
-    // Vector 
+    // Vector  ------------------ end
 
-    // iterators and Closures
+    // iterators and Closures ------------------ start
 
     let treasures = vec![100,200,300,400];
 
@@ -259,9 +260,9 @@ fn main() {
 
     println!("{:?}",double_treasure);
 
-    // iterators and Closures
+    // iterators and Closures ------------------ end
 
-    // HashMap ----- (Key, Value)
+    // HashMap ----- (Key, Value) ------------------ start
 
     let mut treasures = HashMap::new();
 
@@ -287,9 +288,9 @@ fn main() {
     println!("{:?}", treasure_map);  // Output: {"Gold": 50, "Silver": 100}
         // tuple in vector to Hashmap
 
-    // HashMap ----- (Key, Value)
+    // HashMap ----- (Key, Value)  ------------------ end
 
-    // Error Handling 
+    // Error Handling  ------------------ start
 
     // ---------------------- Generic Type Option ----
     // Option Type --- Option ค่าจะมีหรือไม่มีก็ได้ Some คือ มี Value, None คือ ไม่เจอ Value
@@ -356,7 +357,30 @@ fn main() {
 
     // การใช้ ? กรณีที่ Result Error เหมือนกันกับ Function ที่ใหญ่กว่า
 
-    // Error Handling 
+    // Error Handling ------------------ end
+
+    // Smart Pointer ------------------ start
+    // Box<T> คือการทำกล่องเก็บเพื่อข้อมูลใน Heap 8 bytesให้ Rust คำนวณ memory ตอน compline ได้
+    // Rc คือทำให้เราสามารถยืม heap ได้หลาย owner (หลายตัวแปร เข้าถึง ข้อมูลเดียวกัน)
+    // RefCell<T> ให้ Smart Pointer เป็น mutable
+    // use std::{cell::RefCell, rc::Rc};
+        // ---------- test
+    let gold = Box::new(10); //สร้าง กล่อง heap
+    let epic_loot = Rc::new(RefCell::new(gold)); // สร้างตัวแปรมาเพื่อให้ point ได้หลาย owner (Rc), และ mutable (RefCell)
+
+    let loot_1 = Rc::clone(&epic_loot);
+    let loot_2 = Rc::clone(&epic_loot);
+
+    println!("epic loot variable is {}",epic_loot.borrow());
+
+    **loot_1.borrow_mut() += 20; // * แรก เข้าถึง Rc,RefCell, * สอง เข้าถึง Box
+    **loot_2.borrow_mut() += 100;
+
+    println!("epic loot variable is {}",epic_loot.borrow());   
+        // ---------- test
+
+    // Smart Pointer ------------------ end
+
 }
 
 //======================= trait
