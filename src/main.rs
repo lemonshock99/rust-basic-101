@@ -381,7 +381,72 @@ fn main() {
 
     // Smart Pointer ------------------ end
 
+    // Traits as Types ------------------ start
+    // ถ้ามี item หลายแบบ แล้วทำงานเหมือนกัน แต่ไส้ในต่างกัน ใช้ Trait เป็น Type แทน Struct ได้เลย
+        //static
+    println!("---------Trait as type Static---------");
+    let crabby_sword = Sword;
+    let crabby_bow = Bow;    
+    let crabby_potion = Potion;
+
+    use_gear_static(crabby_sword);
+    use_gear_static(crabby_bow);
+    use_gear_static(crabby_potion);
+
+        //dynamic
+    println!("---------Trait as type Dynamic---------");
+    let crabby_sword = Box::new(Sword);
+    let crabby_bow = Box::new(Bow);    
+    let crabby_potion = Box::new(Potion);
+
+    use_gear_dynamic(crabby_sword);
+    use_gear_dynamic(crabby_bow);
+    use_gear_dynamic(crabby_potion);
+    // Traits as Types ------------------ end
+
+    // Threading ------------------ start
+
+    // Threading ------------------ end
+
 }
+
+// use for Traits as Types ------------------ start
+trait Gear {
+    fn use_gear(&self);
+}
+struct Sword;
+struct Bow;
+struct Potion;
+
+fn use_gear_static<T: Gear>(item: T) {
+    item.use_gear();
+}
+
+impl Gear for Sword {
+    fn use_gear(&self) {
+        println!("Swing Sword");
+    }
+}
+
+impl Gear for Bow {
+    fn use_gear(&self) {
+        println!("Fire Arrow");
+    }
+}
+
+impl Gear for Potion {
+    fn use_gear(&self) {
+        println!("Drink Potion");
+    }
+}
+    // Dynamic ----- start
+fn use_gear_dynamic(item: Box<dyn Gear>) {
+    item.use_gear();
+}
+    // Dynamic ----- end
+
+
+// use for Traits as Types ------------------ end
 
 //======================= trait
 // T เป็น Generic Type Parameter สามารถเป็น type อะไรก็ได้เช่น i32, &str, string
