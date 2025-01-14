@@ -1,6 +1,9 @@
 use std::io::{self, Write};
 use std::collections::HashMap;
 use std::{cell::RefCell, rc::Rc};
+use std::thread;
+use std::sync::{Arc,Mutex};
+// use std::time::Duration;
 
 fn main() {
     let mut age = 10;
@@ -405,6 +408,63 @@ fn main() {
     // Traits as Types ------------------ end
 
     // Threading ------------------ start
+    // use std::thread
+    let threaded = thread::spawn(|| {
+        println!("Crabby is mixing a potion!");
+    });
+
+    threaded.join().unwrap();
+        /*
+        threaded.join().unwrap(); จะบล็อกการทำงานของ thread หลักจนกว่า thread ย่อยจะเสร็จสิ้น
+        ถ้าไม่ต้องการรอให้ thread ย่อยทำงานเสร็จ สามารถเรียก spawn และปล่อยให้มันทำงานแบบแยกจากกันโดยไม่ต้องใช้ join:
+
+        สรุป
+        ใช้ join ถ้าคุณต้องการให้แน่ใจว่า thread ย่อยทำงานเสร็จก่อนที่จะดำเนินการต่อ (เช่นในกรณีที่ต้องการผลลัพธ์จาก thread ย่อย)
+        ไม่ใช้ join หากต้องการให้ thread ย่อยทำงานไปพร้อม ๆ กับ thread หลัก (background task)
+         */
+        
+        // smart pointer สำหรับ thread 
+        // use std::sync::Arc; เหมือนกับ RC ที่แค้ Arc ทำให้มีหลาย owner ใน หลายๆ thread
+        // move คือ pass owner เข้าไปใน thread เลย ให้ thread เป็น owner ไปเลย
+        // Mutex --- use std::sync::Mutex; เหมือน RefCell แต่ใช้ได้กับ multi thread
+        // Mutex สามารถ .lock() ไว้ก่อน เพื่อให้ thread แก้ค่าเสร็จก่อน thread ต้องรอ อื่นถึงจะแก้ไขค่าได้  
+        // smart pointer สำหรับ thread 
+
+        // example---------start
+
+    let crabby_gold = Arc::new(Mutex::new(10));
+
+    // สร้าง loot_1 แล้ว clone crabby_gold + move owner ไปแล้ว เปลี่ยนค่า
+    let loot_1 = thread::spawn({
+        let crabby_gold_artifact = Arc::clone(&crabby_gold);
+        move || {
+            let mut gold = crabby_gold_artifact.lock().unwrap();
+            *gold += 100;
+        }
+    });
+
+    let loot_2 = thread::spawn({
+        let crabby_gold_artifact = Arc::clone(&crabby_gold);
+        move || {
+            let mut gold = crabby_gold_artifact.lock().unwrap();
+            *gold += 200;
+        }
+    });
+
+    let loot_3 = thread::spawn({
+        let crabby_gold_artifact = Arc::clone(&crabby_gold);
+        move || {
+            let mut gold = crabby_gold_artifact.lock().unwrap();
+            *gold += 80;
+        }
+    });
+
+    loot_1.join().unwrap();
+    loot_2.join().unwrap();
+    loot_3.join().unwrap();
+
+    println!("Gold: {}", crabby_gold.lock().unwrap());
+        // example---------end
 
     // Threading ------------------ end
 
