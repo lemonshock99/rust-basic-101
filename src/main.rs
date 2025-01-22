@@ -2,7 +2,7 @@ use std::io::{self, Write};
 use std::collections::HashMap;
 use std::{cell::RefCell, rc::Rc};
 use std::thread;
-use std::sync::{Arc,Mutex};
+use std::sync::{Arc,Mutex, mpsc};
 // use std::time::Duration;
 
 fn main() {
@@ -467,6 +467,39 @@ fn main() {
         // example---------end
 
     // Threading ------------------ end
+
+    // Channel ------------------ start
+    // use std::sync::{mpsc, Arc};
+    // use std::thread
+    // เป็นการส่ง value ผ่านระหว่าง thread โดยจะผ่าน sender receiver ขาส่งเรียก producer ขารับเรียก consumer)
+    let items = vec![
+        "sword".to_string(),
+        "shield".to_string(),
+        "potion".to_string(),
+    ];
+
+    let (sender, receiver) = mpsc::sync_channel(items.len()); 
+    // *** ถ้าไม่กำหนดขนาด channel สามารถทำได้โดย mpsc::channel() แต่เมื่อใช้เสร็จต้องทำการ drop(sender_arc) ทิ้งด้วย
+    let sender_arc = Arc::new(sender);
+
+    for item in items.clone().into_iter() {
+        thread::spawn({
+            let thread_sender = Arc::clone(&sender_arc);
+            let item = item.clone();
+
+            move || {
+                thread_sender
+                    .send(format!("Worker {}: Task complete", item))
+                    .unwrap();
+            }
+        });
+    }
+
+    for _ in 0..items.len() {
+        let item = receiver.recv().unwrap();
+        println!("Crabby received: {}", item); // ถ้าลองรันหลายๆรอบ ข้อความจะเรียงไม่เหมือนกัน เพราะ thread ไหนเสร็จก่อน จะส่งมาก่อน
+    }
+    // Channel ------------------ end
 
 }
 
