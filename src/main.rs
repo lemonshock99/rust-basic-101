@@ -1,11 +1,19 @@
+// use std::future; //after use async it show not use
 use std::io::{self, Write};
 use std::collections::HashMap;
+// use std::sync::mpsc::Sender; //after use async it show not use
 use std::{cell::RefCell, rc::Rc};
-use std::thread;
+use std::thread::{self};
+// use std::thread::{self, spawn}; //after use async it show not use
 use std::sync::{Arc,Mutex, mpsc};
+use tokio;
+// use tokio::sync::mpsc; // mpsc ซ้ำ
 // use std::time::Duration;
 
-fn main() {
+// #[tokio::main] หากต้องการใส่ async ที่ หน้า function main ได้
+#[tokio::main]
+async fn main() {
+// fn main() {
     let mut age = 10;
     println!("Hello, crabby! age {}", age);   
     age = 15;
@@ -81,7 +89,7 @@ fn main() {
     }
 
     let new_str = merge_string("Hello".to_string(), "Crebby".to_string());
-    println!("{}",new_str);
+    println!("Merge String is >>> {}",new_str);
 
 
 
@@ -501,7 +509,95 @@ fn main() {
     }
     // Channel ------------------ end
 
-}
+    // Tokio & Async ------------------ start
+    // Tokio & Async ทำงานหลายอย่างแต่จะเป็นการรันบน cpu Thread เดียว ใช้ event-driven concurrency model 
+    // เหมาะกับงานเน้นปริมาณรับ user เยอะๆ ไม่ได้ต้องการ process หนักๆ
+    // add in Cargo.toml > [dependencies] // tokio = { version = "1", features = ["full"] }
+    // use tokio
+
+        // (asynchronous) ต้องรอให้ .await ก่อนถึงจะทำงาน
+    tokio_test().await;
+        // เราสามารถ แยก task เป็น function แล้ว join function ได้
+    let _ = tokio::join!(function1(), function2());
+        // channel ใน tokio
+
+    let items = vec!["herbs", "gold coins", "gems"];
+
+    let (tx, mut rx) = tokio::sync::mpsc::channel(items.len());
+    let tx = Arc::new(tx);
+
+    for item in items.clone().into_iter() {
+        tokio::spawn({
+            let clone_tx = Arc::clone(&tx);
+            async move {
+                send_item(item, clone_tx).await;
+            }
+        });
+    }
+    drop(tx); // **** ต้อง drop ทุกครั้งหลังเลิกใช้ ป้องกับ ปัญหา dead lock
+
+    for _ in 0..items.len() {
+        let result = rx.recv().await.unwrap();
+        println!("Crabby received: {}", result);
+    }
+        // end channel ใน tokio
+
+    // Tokio & Async ------------------ end
+
+} // fn end
+
+    // use for Tokio & Async ------------------ start
+    async fn tokio_test() -> () {
+        let task1 = tokio::spawn(async {
+            println!("Crabby 1");
+        });
+
+
+        let task2 = tokio::spawn(async {
+            println!("Crabby 2");
+        });
+
+        let _ = tokio::try_join!(task1, task2); // join เพื่อให้ sync
+
+        // หรือ 
+
+        tokio::spawn(async {
+            println!("Crabby 3");
+        })
+        .await
+        .unwrap();
+
+        tokio::spawn(async {
+            println!("Crabby 4");
+        })
+        .await
+        .unwrap();
+        // ใช้ .await เพื่อให้รอ task นี้ทำงานเสร็จก่อน 
+
+    }
+
+        // example async join function
+
+    async fn function1() -> () {
+        tokio::spawn(async {
+            println!("Task 1");
+        });
+    }
+
+    async fn function2() -> () {
+        tokio::spawn(async {
+            println!("Task 2");
+        });
+    }
+        // ตัว funtion สำหรับทำ channel 
+    async fn send_item<'a>(
+        item: &'a str,
+        tx: Arc<tokio::sync::mpsc::Sender<&'a str>>
+    ) {
+        tx.send(item).await.unwrap()
+    }
+
+    // use for Tokio & Async ------------------ end
 
 // use for Traits as Types ------------------ start
 trait Gear {
@@ -511,6 +607,7 @@ struct Sword;
 struct Bow;
 struct Potion;
 
+// T คือ Generic type ใช้รับตัวแปร type อะไรก็ได้ ไม่ fix
 fn use_gear_static<T: Gear>(item: T) {
     item.use_gear();
 }
