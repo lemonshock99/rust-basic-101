@@ -10,6 +10,9 @@ use tokio;
 // use tokio::sync::mpsc; // mpsc ซ้ำ
 // use std::time::Duration;
 
+use hello_crabby::open_map::open_map;
+use hello_crabby::potion;
+
 // #[tokio::main] หากต้องการใส่ async ที่ หน้า function main ได้
 #[tokio::main]
 async fn main() {
@@ -543,6 +546,36 @@ async fn main() {
         // end channel ใน tokio
 
     // Tokio & Async ------------------ end
+
+    // แยกไฟล์ module และ การใช้ Crate ------------------ start
+    /*
+    ถ้าใน main.rs สามารถประกาศ public module ได้โดย
+    mod <module_name> {
+        pub fn <function name>() -> () {
+            task....
+        }
+    }
+    การเรียก function ผ่าน module ใช้ <Projectname>::<filename>::<function name>::<function>;
+    ใน src สร้าง lib.rs แล้วเขียน pub mod <filename>
+    ใน file_name.rs ประกาศ pub ไว้หน้า fn
+
+    ถ้า module เราแยก folder เอาชื่อ folder มาประกาศไว้ที่ lib.rs โดยเขียน pub mod <folder name>;
+    ใน folder จะต้องสร้างไฟล์ mod.rs ขึ้นมา แล้วในไฟล์ เขียน pub mod <filename>
+    ใน file_name.rs ประกาศ pub ไว้หน้า fn
+    ** หากเราต้องการเรียน module ที่อยู่ใน folder จะใช้ use crate::<folder>::<file_name>::<function>;
+    ง่ายๆ ก็คือ crate แสดงถึง root_path ของ project
+
+    ถ้า module ต้องการเรียก module ใน folder ตัวเอง สามารถใช้ use super::<filename>::<function name>;
+
+     */
+
+    // use hello_crabby::open_map::open_map;
+    open_map();
+    // use hello_crabby::potion;
+    potion::mix_potion::mix_potion();
+    
+    // แยกไฟล์ module และ การใช้ Crate ------------------ start
+     
 
 } // fn end
 
