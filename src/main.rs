@@ -13,6 +13,8 @@ use tokio;
 use hello_crabby::open_map::open_map;
 use hello_crabby::potion;
 
+// use hello_crabby::ai;
+
 // #[tokio::main] หากต้องการใส่ async ที่ หน้า function main ได้
 #[tokio::main]
 async fn main() {
@@ -575,7 +577,19 @@ async fn main() {
     potion::mix_potion::mix_potion();
     
     // แยกไฟล์ module และ การใช้ Crate ------------------ start
-     
+
+
+    // let api_key = ""; // Replace with your actual key
+    // let assistant_id = "asst_YimrCnhKpNVmzxQAxPZTm83V"; // Replace with plugA's ID
+    // let message = "8 โมง เข็มสั้นอยู่ที่เลขอะไร";
+
+    // if let Err(err) = ai::testchatgpt::send_message(assistant_id, message, api_key).await {
+    //     eprintln!("Error: {}", err);
+    // }
+    
+    // if let Err(err) = ai::testchatgpt::get_thread_log("thread_RJQ1RKB7tF19G7RpS4xBwPlW", api_key).await{
+    //     eprintln!("Error: {}", err);
+    // }
 
 } // fn end
 
